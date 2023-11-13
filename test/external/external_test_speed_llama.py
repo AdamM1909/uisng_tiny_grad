@@ -11,8 +11,8 @@ from tinygrad.helpers import dtypes, prod
 from tinygrad.runtime.lib import RawBuffer
 
 class FakeProgram:
-  def __init__(self, name:str, prg:str, binary:bool): pass
-  def __call__(self, global_size, local_size, *bufs, wait=False): pass
+  def __init__(self, name:str, prg:str): pass
+  def __call__(self, *bufs, global_size, local_size, wait=False): pass
 
 class RawFakeBuffer(RawBuffer):
   @classmethod
@@ -38,7 +38,7 @@ class TestLLaMASpeed(unittest.TestCase):
       if empty_method_cache: Device[Device.DEFAULT].method_cache.clear()
       tms = [time.perf_counter()]
       for i in range(10):
-        model(Tensor([[2]]), i).realize()
+        model(Tensor([[1,2,3,4]]), i).realize()
         tms.append(time.perf_counter())
       timings = [(tms[i+1]-tms[i])*1000 for i in range(len(tms)-1)]
       print(f"{st:15s} mean runtime: {sum(timings)/len(timings):7.2f}ms, runs: ", ", ".join(f'{x:7.2f}' for x in timings))

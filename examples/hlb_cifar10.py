@@ -18,7 +18,7 @@ from tinygrad.nn.state import get_state_dict
 from tinygrad.nn import optim
 from tinygrad.ops import Device
 from tinygrad.tensor import Tensor
-from tinygrad.ops import GlobalCounters
+from tinygrad.helpers import GlobalCounters
 from tinygrad.shape.symbolic import Node
 from extra.lr_scheduler import OneCycleLR
 from tinygrad.jit import TinyJit
@@ -317,7 +317,7 @@ def train_cifar():
         bucket, offset = [], 0
         for _, v in params_dict.items():
           if v.grad is not None: bucket.append(v.grad.flatten())
-        grads = collectives.allreduce(Tensor.cat(*bucket), cache_id="grads")
+        grads = collectives.allreduce(Tensor.cat(*bucket))
         for _, v in params_dict.items():
           if v.grad is not None:
             v.grad.assign(grads[offset:offset+v.grad.numel()].reshape(*v.grad.shape))
@@ -426,8 +426,12 @@ if __name__ == "__main__":
   if not getenv("DIST"):
     train_cifar()
   else: # distributed
-    from tinygrad.runtime.ops_gpu import CL
-    devices = [f"gpu:{i}" for i in range(len(CL.devices))]
+    if getenv("HIP"):
+      from tinygrad.runtime.ops_hip import HIP
+      devices = [f"hip:{i}" for i in range(HIP.device_count)]
+    else:
+      from tinygrad.runtime.ops_gpu import CL
+      devices = [f"gpu:{i}" for i in range(len(CL.devices))]
     world_size = len(devices)
 
     # ensure that the batch size is divisible by the number of devices
