@@ -445,6 +445,7 @@ class Tensor:
     assert all_int(self.shape), "does not support symbolic shape"
     square_sum = ((self - self.mean(axis=axis, keepdim=True)).square()).sum(axis=axis, keepdim=keepdim)
     return square_sum.div(prod(self.shape)/prod(square_sum.shape)-correction).sqrt()
+  
   def _softmax(self, axis):
     m = self - self.max(axis=axis, keepdim=True)
     e = m.exp()
@@ -453,6 +454,10 @@ class Tensor:
   def softmax(self, axis=-1):
     _, e, ss = self._softmax(axis)
     return e.div(ss)
+
+  def softmaxp1(self, axis=-1):
+    _, e, ss = self._softmax(axis)
+    return e.div(1 + ss)
 
   def log_softmax(self, axis=-1):
     m, _, ss = self._softmax(axis)

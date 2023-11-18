@@ -3,7 +3,7 @@ from typing import Optional, Tuple, Union, Any, Dict, Callable, Type, List, Clas
 from enum import Enum, auto
 from abc import ABC
 
-# we will be using the clang backend
+
 from tinygrad.ops import Device
 Device.DEFAULT = "GPU"
 
