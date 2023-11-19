@@ -27,7 +27,7 @@ class TestTinyGradSoftmaxPlusOne(unittest.TestCase):
 
     def testlimit_x_large(self):
         """
-        As x_0, x_1, ... -> -inf, e^{x_i}/1 + sum(e^{x_i}) -> e^{x_i}/ sum(e^{x_i})
+        As x_0, x_1, ... -> inf, e^{x_i}/1 + sum(e^{x_i}) -> e^{x_i}/ sum(e^{x_i})
 
         I.e. softamxplus1 -> softamx.
         """
