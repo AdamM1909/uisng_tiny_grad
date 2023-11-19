@@ -12,7 +12,7 @@ class TestTinyGradSoftmaxPlusOne(unittest.TestCase):
         np_smp1 = np_softmaxplus1(x)
         np.testing.assert_array_equal(tiny_grad_smp1, np_smp1)
 
-    def testlimit_x_small(self):
+    def testlimit_x_neg_inf(self):
         """
         As x_0, x_1, ... -> -inf, e^{x_i}/1 + sum(e^{x_i}) -> 0.
 
@@ -25,7 +25,7 @@ class TestTinyGradSoftmaxPlusOne(unittest.TestCase):
         expected = np.array([0.]*10)
         np.testing.assert_almost_equal(tiny_grad_smp1, expected, decimal = 5) 
 
-    def testlimit_x_large(self):
+    def testlimit_x_pos_inf(self):
         """
         As x_0, x_1, ... -> inf, e^{x_i}/1 + sum(e^{x_i}) -> e^{x_i}/ sum(e^{x_i})
 
