@@ -455,20 +455,22 @@ class Tensor:
     return square_sum.div(prod(self.shape)/prod(square_sum.shape)-correction).sqrt()
   
   def _softmax(self, axis):
-    m = self - self.max(axis=axis, keepdim=True)
+    l = self.max(axis=axis, keepdim=True)
+    m = self - l
     e = m.exp()
-    return m, e, e.sum(axis=axis, keepdim=True)
+    return m, e, e.sum(axis=axis, keepdim=True), l
 
   def softmax(self, axis=-1):
-    _, e, ss = self._softmax(axis)
+    _, e, ss, _ = self._softmax(axis)
     return e.div(ss)
 
   def softmaxp1(self, axis=-1):
-    _, e, ss = self._softmax(axis)
-    return e.div(1 + ss)
+    _, e, ss, l = self._softmax(axis)
+    denom = (-l).exp() + ss
+    return e.div(denom)
 
   def log_softmax(self, axis=-1):
-    m, _, ss = self._softmax(axis)
+    m, _, ss, _ = self._softmax(axis)
     return m - ss.log()
 
   def argmax(self, axis=None, keepdim=False):
